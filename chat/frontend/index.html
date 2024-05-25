@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0">
+    <link rel="stylesheet" href="../frontend/css/style.css">
+    <link rel="shortcut icon" href="../frontend/images/web-chat.png" type="image/x-icon">
+    <title>ChatCode</title>
+</head>
+<body>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/4.6.2/typescript.min.js"></script>
+
+    <section class="container">
+        <section class="login">
+            <h2>ChatCode <br>Login</h2>
+            <form class="login__form">
+                <input type="text" class="login__input" placeholder="Seu nome" required />
+                <button type="submit" class="login__button">Entrar</button>
+            </form>
+        </section>
+
+        <section class="chat">
+            <section class="chat__messages">
+                <!-- Mensagens do chat serão exibidas aqui -->
+            </section>
+
+            <form class="chat__form">
+                <input type="text" class="chat__input" placeholder="Digite uma mensagem" required />
+                <button type="submit" class="chat__button">
+                    <!-- Ícone de enviar mensagem -->
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+                <!-- Botão para abrir a tela de código -->
+                <button type="button" class="chat__code-button">Code</button>
+                <!-- Botão para enviar imagens
+                 <button type="button" class="chat__image-button">
+                    Ícone de imagem 
+                    <span class="material-symbols-outlined">image</span>
+                </button> -->
+               
+            </form>
+
+            <!-- Tela de código -->
+            <div class="code-popup" id="code-popup">
+                <div class="code-popup__content">
+                    <!-- Botão de fechar -->
+                    <button class="code-popup__close-button">❌</button>
+                    <h2>Coloque seu código</h2>
+                    <select class="code-popup__language-selector">
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                    </select>
+                    <!-- Contêiner para o textarea e a numeração das linhas -->
+                    <div class="code-popup__code-container">
+                        <!-- Numeração das linhas -->
+                        <div class="code-popup__line-numbers"></div>
+                        <!-- Textarea para inserir código JavaScript ou TypeScript -->
+                        <textarea class="code-popup__textarea" placeholder="Insira seu código aqui"></textarea>
+                        <pre class="code-popup__highlighting"></pre>
+                    </div>
+                    <!-- Botão para executar o código inserido -->
+                    <button class="code-popup__button">Executar</button>
+                    <!-- Elemento para exibir a saída do console -->
+                    <div class="code-popup__console" id="code-popup-console"></div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
