@@ -6,6 +6,7 @@
     "firebase-admin": "^12.1.0",
     "multer": "^1.4.5-lts.1"
   },
+  
   "name": "backend",
   "version": "1.0.0",
   "main": "firebaseConfig.js",

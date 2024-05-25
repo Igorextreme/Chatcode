@@ -1,7 +1,9 @@
+
 const express = require('express');
 const router = express.Router();
 
 module.exports = (upload, db) => {
+  
   
   // Endpoint para enviar mensagem
   router.post('/send-message', upload.single('image'), (req, res) => {

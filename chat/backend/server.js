@@ -6,6 +6,7 @@ const db = require('./firebaseConfig');
 const routes = require('./routes');
 const PORT = process.env.PORT || 3000;
 
+
 const app = express();
 
 // Middleware para logar todas as conexões

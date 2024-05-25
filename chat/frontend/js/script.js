@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const codePopup = document.getElementById('code-popup');
   const codeButton = document.querySelector('.chat__code-button');
   const codeCloseButton = document.querySelector('.code-popup__close-button');
-  const codeExecuteButton = document.querySelector('.code-popup__button');
+const codeExecuteButton = document.querySelector('.code-popup__button');
   const codeConsole = document.getElementById('code-popup-console');
   let userId = null;
   let userName = null;
