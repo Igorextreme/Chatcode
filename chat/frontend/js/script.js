@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const codePopup = document.getElementById('code-popup');
   const codeButton = document.querySelector('.chat__code-button');
   const codeCloseButton = document.querySelector('.code-popup__close-button');
-const codeExecuteButton = document.querySelector('.code-popup__button');
+  const codeExecuteButton = document.querySelector('.code-popup__button');
   const codeConsole = document.getElementById('code-popup-console');
   let userId = null;
   let userName = null;
@@ -169,6 +169,30 @@ console.log = function() {
   const message = Array.from(arguments).join(",");
   codeConsole.textContent += message + "\n";
 };
+
+
+function clearAllMessages() {
+  fetch('https://chatcode-back.onrender.com/api/clearall', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Failed to clear messages');
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log(data.message); // Mensagem de sucesso da limpeza de mensagens
+  })
+  .catch(error => {
+      console.error('Error clearing messages:', error); // Tratamento de erro
+  });
+}
+
+
 
 
 });

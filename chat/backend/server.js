@@ -2,10 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const db = require('./firebaseConfig');
-const routes = require('./routes');
+const firebase = require('./firebaseConfig'); // Certifique-se de que este arquivo está configurado corretamente
+const routes = require('./routes'); // Certifique-se de que este arquivo existe e exporta suas rotas
 const PORT = process.env.PORT || 3000;
-
 
 const app = express();
 
@@ -27,7 +26,19 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Limite de 50MB
 
 // Rotas
-app.use('/api', routes(upload, db));
+app.use('/api', routes(upload, firebase));
+
+// Rota para limpar todas as mensagens
+app.post('/clearall', (req, res) => {
+  firebase.database().ref('messages').remove()
+    .then(() => {
+      res.status(200).send({ message: 'All messages cleared!' });
+    })
+    .catch((error) => {
+      console.error('Error clearing messages:', error);
+      res.status(500).send({ error: 'Failed to clear messages' });
+    });
+});
 
 // Middleware de tratamento de erros
 app.use((err, req, res, next) => {
