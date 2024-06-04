@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const codeConsole = document.getElementById('code-popup-console');
     const imageButton = document.querySelector('.chat__image-button');
     const imageInput = document.querySelector('#imageInput');
+    const ttElement = document.querySelector('.tt'); // Adicione esta linha
+    const container = document.querySelector('.container'); // Adicione esta linha
     let userId = null;
     let userName = null;
     let userColor = null;
@@ -80,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
         userColor = colors[Math.floor(Math.random() * colors.length)];
         document.querySelector('.login').style.display = 'none';
         document.querySelector('.chat').style.display = 'flex';
+        ttElement.style.display = 'none'; // Adicione esta linha
+        container.classList.add('fullscreen'); // Adicione esta linha
         loadMessages();
     });
 
@@ -187,93 +191,87 @@ document.addEventListener('DOMContentLoaded', function () {
         messageElement.appendChild(messageContentElement);
         messagesContainer.appendChild(messageElement);
 
-        scrollToLastMessage();
+        scrollToLastMessage(); // Chame a função após adicionar a mensagem ao contêiner
     }
 
-    // Check for bot command and respond
-    async function checkBotResponse(userMessage) {
-        const botResponse = responses[userMessage];
-        if (botResponse) {
-            const timestamp = await getServerTimestamp();
+    // Check for bot response
+    function checkBotResponse(messageText) {
+        const lowerCaseMessage = messageText.toLowerCase();
+        if (responses.hasOwnProperty(lowerCaseMessage)) {
+            const botResponse = responses[lowerCaseMessage];
             const botMessage = {
                 userId: 'bot',
-                userName: 'Robozão dos Cria de ADS',
-                userColor: '#FF5733',
+                userName: 'ChatCodeBot',
+                userColor: 'lightblue',
                 content: botResponse,
                 isImage: false,
-                timestamp
+                timestamp: Date.now()
             };
-            db.ref("messages").push(botMessage)
-                .then(() => {
-                    scrollToLastMessage(); // Chame a função após a mensagem do bot ser enviada
-                })
-                .catch(error => console.error('Error sending bot message:', error));
+            setTimeout(() => {
+                db.ref("messages").push(botMessage);
+            }, 1000);
         }
     }
 
-    // Image upload functionality
-    imageButton.addEventListener('click', () => {
-        imageInput.click();
-    });
-
-    imageInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            uploadImage(file);
-        }
-    });
-
-    async function uploadImage(file) {
-        const storageRef = storage.ref();
-        const imageRef = storageRef.child(`images/${Date.now()}_${file.name}`);
-        const uploadTask = imageRef.put(file);
-
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // Progresso do upload
-            },
-            (error) => {
-                console.error('Error uploading image:', error);
-            },
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
-                    const timestamp = await getServerTimestamp();
-                    sendMessage(downloadURL, true, timestamp); // Envia o link da imagem
-                });
-            }
-        );
-    }
-
-    // Code popup functionality
-    codeButton.addEventListener('click', () => {
+    // Code button click event
+    codeButton.addEventListener('click', function () {
         codePopup.style.display = 'flex';
     });
 
-    codeCloseButton.addEventListener('click', () => {
+    // Code popup close button event
+    codeCloseButton.addEventListener('click', function () {
         codePopup.style.display = 'none';
     });
 
-    codeExecuteButton.addEventListener('click', () => {
-        const languageSelector = document.querySelector('.code-popup__language-selector');
-        const codeTextarea = document.querySelector('.code-popup__textarea');
-        const language = languageSelector.value;
-        const code = codeTextarea.value;
-        executeCode(language, code);
-    });
+    // Code execute button event
+    codeExecuteButton.addEventListener('click', async function () {
+        const code = document.getElementById('code-popup-textarea').value;
+        const language = document.getElementById('language-selector').value;
 
-    function executeCode(language, code) {
-        codeConsole.innerHTML = '';
         try {
-            if (language === 'javascript') {
-                const result = eval(code);
-                codeConsole.innerHTML = result;
-            } else if (language === 'typescript') {
-                const tsResult = ts.transpile(code);
-                const jsResult = eval(tsResult);
-                codeConsole.innerHTML = jsResult;
+            const response = await fetch('/execute_code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                codeConsole.textContent = result;
+            } else {
+                codeConsole.textContent = 'Error executing code.';
             }
         } catch (error) {
-            codeConsole.innerHTML = `Error: ${error.message}`;
+            codeConsole.textContent = 'An error occurred while executing the code.';
         }
-    }
+    });
+
+    // Image button click event
+    imageButton.addEventListener('click', function () {
+        imageInput.click();
+    });
+
+    // Image input change event
+    imageInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const storageRef = storage.ref(`images/${file.name}`);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed',
+                function (snapshot) {
+                    // Progress
+                },
+                function (error) {
+                    console.error('Error uploading image:', error);
+                },
+                async function () {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    sendMessage(downloadURL, true, await getServerTimestamp());
+                }
+            );
+        }
+    });
 });
