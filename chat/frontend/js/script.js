@@ -212,41 +212,38 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 1000);
         }
     }
-
-    // Code button click event
-    codeButton.addEventListener('click', function () {
+   // Code popup functionality
+    codeButton.addEventListener('click', () => {
         codePopup.style.display = 'flex';
     });
 
-    // Code popup close button event
-    codeCloseButton.addEventListener('click', function () {
+    codeCloseButton.addEventListener('click', () => {
         codePopup.style.display = 'none';
     });
 
-    // Code execute button event
-    codeExecuteButton.addEventListener('click', async function () {
-        const code = document.getElementById('code-popup-textarea').value;
-        const language = document.getElementById('language-selector').value;
+    codeExecuteButton.addEventListener('click', () => {
+        const languageSelector = document.querySelector('.code-popup__language-selector');
+        const codeTextarea = document.querySelector('.code-popup__textarea');
+        const language = languageSelector.value;
+        const code = codeTextarea.value;
+        executeCode(language, code);
+    });
 
+    function executeCode(language, code) {
+        codeConsole.innerHTML = '';
         try {
-            const response = await fetch('/execute_code', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, language }),
-            });
-
-            if (response.ok) {
-                const result = await response.text();
-                codeConsole.textContent = result;
-            } else {
-                codeConsole.textContent = 'Error executing code.';
+            if (language === 'javascript') {
+                const result = eval(code);
+                codeConsole.innerHTML = result;
+            } else if (language === 'typescript') {
+                const tsResult = ts.transpile(code);
+                const jsResult = eval(tsResult);
+                codeConsole.innerHTML = jsResult;
             }
         } catch (error) {
-            codeConsole.textContent = 'An error occurred while executing the code.';
+            codeConsole.innerHTML = `Error: ${error.message}`;
         }
-    });
+    }
 
     // Image button click event
     imageButton.addEventListener('click', function () {
