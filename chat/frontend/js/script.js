@@ -9,16 +9,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const codeConsole = document.getElementById('code-popup-console');
     const imageButton = document.querySelector('.chat__image-button');
     const imageInput = document.querySelector('#imageInput');
-    const ttElement = document.querySelector('.tt'); // Adicione esta linha
-    const container = document.querySelector('.container'); // Adicione esta linha
+    const ttElement = document.querySelector('.tt');
+    const container = document.querySelector('.container');
     let userId = null;
     let userName = null;
     let userColor = null;
 
     // Lista de cores para os nomes dos usuários
-    const colors = [
-        "cadetblue", "darkgoldenrod", "cornflowerblue", "darkkhaki", "hotpink", "gold"
-    ];
+    const colors = ["cadetblue", "darkgoldenrod", "cornflowerblue", "darkkhaki", "hotpink", "gold"];
 
     // Configuração do Firebase
     const firebaseConfig = {
@@ -82,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function () {
         userColor = colors[Math.floor(Math.random() * colors.length)];
         document.querySelector('.login').style.display = 'none';
         document.querySelector('.chat').style.display = 'flex';
-        ttElement.style.display = 'none'; // Adicione esta linha
-        container.classList.add('fullscreen'); // Adicione esta linha
+        ttElement.style.display = 'none';
+        container.classList.add('fullscreen');
         loadMessages();
     });
 
@@ -212,7 +210,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 1000);
         }
     }
-   // Code popup functionality
+
+    // Code popup functionality
     codeButton.addEventListener('click', () => {
         codePopup.style.display = 'flex';
     });
@@ -231,19 +230,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function executeCode(language, code) {
         codeConsole.innerHTML = '';
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            const message = args.join(' ') + '\n';
+            codeConsole.innerHTML += message.replace(/\n/g, '<br>');
+            originalConsoleLog.apply(console, args);
+        };
+    
         try {
             if (language === 'javascript') {
-                const result = eval(code);
-                codeConsole.innerHTML = result;
+                const result = executeJavaScript(code);
+                if (result !== undefined) {
+                    codeConsole.innerHTML += result;
+                }
             } else if (language === 'typescript') {
                 const tsResult = ts.transpile(code);
-                const jsResult = eval(tsResult);
-                codeConsole.innerHTML = jsResult;
+                const result = executeJavaScript(tsResult);
+                if (result !== undefined) {
+                    codeConsole.innerHTML += result;
+                }
             }
         } catch (error) {
-            codeConsole.innerHTML = `Error: ${error.message}`;
+            codeConsole.innerHTML += `Error: ${error.message}`;
+        } finally {
+            console.log = originalConsoleLog; // Restaura o console.log original
         }
     }
+    
+    function executeJavaScript(code) {
+        try {
+            const result = (new Function(code))();
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 
     // Image button click event
     imageButton.addEventListener('click', function () {
