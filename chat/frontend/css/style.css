@@ -266,7 +266,7 @@ body {
     }
 
     .login__input, .chat__input {
-        width: 100%;
+        width: calc(100% - 2rem); /* Ajusta a largura do input */
         margin: 0 0 1rem 0;
         text-align: center;
     }
@@ -279,10 +279,11 @@ body {
     .chat__image-button,
     .code-popup__close-button,
     .code-popup__button {
-        width: 100%;
+        width: calc(100% - 2rem); /* Ajusta a largura dos botões */
         padding: 0.8rem 1rem;
         margin-bottom: 1rem;
         box-sizing: border-box;
+        text-align: center;
     }
 
     .chat__form {
@@ -295,7 +296,9 @@ body {
         margin: 0 0 1rem 0;
     }
 
-    .chat__button, .chat__code-button, .chat__image-button {
+    .chat__button,
+    .chat__code-button,
+    .chat__image-button {
         width: calc(100% - 2rem); /* Ajusta a largura dos botões */
         margin: 0 0 1rem 0;
     }
