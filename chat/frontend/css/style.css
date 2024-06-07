@@ -262,54 +262,26 @@ body {
 
 
 /* Media Queries */
+/* Media Queries */
 @media (max-width: 768px) {
     .container {
         height: calc(100vh - 100px);
     }
     
     .chat__form {
-        flex-direction: column;
+        flex-direction: row; /* Altera para layout em linha */
+        justify-content: space-between; /* Distribui os botões horizontalmente */
     }
 
     .chat__input {
-        margin-bottom: 1rem;
-        margin-right: 0;
-        width: 100%;
+        margin-right: 1rem; /* Adiciona margem à direita para separar os botões */
+        width: calc(50% - 1rem); /* Ajusta a largura do campo de entrada */
     }
 
     .chat__send-button,
     .chat__code-button,
     .chat__image-button {
-        width: 100%;
-        margin: 0.2rem 0;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        height: calc(100vh - 100px);
-    }
-
-    .login__input, .name-input__input {
-        width: 100%;
-        text-align: left;
-        margin: 0.5rem 0;
-    }
-
-    .chat__form {
-        flex-direction: column;
-        padding: 0.5rem;
-    }
-
-    .chat__input {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-
-    .chat__send-button,
-    .chat__code-button,
-    .chat__image-button {
-        width: 100%;
-        margin: 0.2rem 0;
+        width: calc(33.33% - 1rem); /* Ajusta a largura dos botões */
+        margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
     }
 }
