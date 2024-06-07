@@ -275,7 +275,7 @@ body {
     }
 
     .chat__input {
-        flex-grow: 2; /* Ocupa mais espaço disponível */
+        flex-grow: 3; /* Ocupa mais espaço disponível */
         margin-right: 1rem; /* Adiciona margem à direita para separar os botões */
     }
 
