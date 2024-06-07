@@ -267,11 +267,12 @@ body {
     .container {
         height: calc(100vh - 100px);
     }
-    
+
     .chat__form {
         display: flex;
         flex-wrap: wrap; /* Permitir que os itens quebrem para a próxima linha */
         justify-content: space-between; /* Distribui os elementos horizontalmente */
+        align-items: center; /* Alinha os itens verticalmente */
     }
 
     .chat__input {
@@ -284,5 +285,12 @@ body {
     .chat__image-button {
         flex-basis: calc(33.33% - 1rem); /* Define a base de tamanho dos botões */
         margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
+        margin-right: 1rem; /* Adiciona margem à direita para separar os botões */
+    }
+    
+    .chat__send-button:last-child,
+    .chat__code-button:last-child,
+    .chat__image-button:last-child {
+        margin-right: 0; /* Remove a margem à direita do último botão para evitar espaço extra */
     }
 }
