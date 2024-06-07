@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.querySelector('.login__form');
+    const registerButton = document.querySelector('.register__button');
+    const nameInputForm = document.querySelector('.name-input__form');
     const chatForm = document.querySelector('.chat__form');
     const messagesContainer = document.querySelector('.chat__messages');
     const codePopup = document.getElementById('code-popup');
@@ -15,10 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let userName = null;
     let userColor = null;
 
-    // Lista de cores para os nomes dos usuários
     const colors = ["cadetblue", "darkgoldenrod", "cornflowerblue", "darkkhaki", "hotpink", "gold"];
 
-    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyA6PWkidk688t7Jt1cRec2pwDrqByI448k",
         authDomain: "chatcode-3ff70.firebaseapp.com",
@@ -30,188 +30,124 @@ document.addEventListener('DOMContentLoaded', function () {
         measurementId: "G-FNP2G66YZS"
     };
 
-    // Inicializa o Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
     const storage = firebase.storage();
 
-    // Respostas predefinidas do bot
     const responses = {
-        "/bot": "Olá sou o Robozão dos Cria de ADS, posso ajudar com alguns dos comandos abaixo:<br>" +
+        "/bot": "Olá! Sou o Robozão dos Cria de ADS. Posso ajudar com alguns dos comandos abaixo:<br>" +
             "<br>- /bot o que é algoritmo?<br>" +
             "- /bot o que é javascript?<br>" +
             "- /bot qual a diferença entre java e javascript?<br>" +
             "- /bot o que é html?<br>" +
-            "- /bot qual a diferença entre css e html?",
-        "/bot o que é algoritmo?": "É uma sequência finita de ações executáveis que visam obter uma solução para um determinado tipo de problema.",
-        "/bot o que é javascript?": "JavaScript é uma linguagem de programação amplamente utilizada para criar páginas web interativas.",
-        "/bot qual a diferença entre java e javascript?": "Java e JavaScript são linguagens de programação diferentes. Java é uma linguagem de programação de propósito geral, enquanto JavaScript é principalmente usada para desenvolvimento web.",
-        "/bot o que é html?": "HTML (HyperText Markup Language) é a linguagem padrão para criação de páginas web. Ele define a estrutura básica e o conteúdo de uma página web.",
-        "/bot qual a diferença entre css e html?": "HTML é usado para definir a estrutura e o conteúdo de uma página web, enquanto CSS (Cascading Style Sheets) é usado para estilizar a página e controlar o layout."
+            "- /bot qual o comando de git para fazer commit?<br>" +
+            "- /bot quais as permissões do chmod?<br>" +
+            "- /bot como criar um repositório no github?<br>" +
+            "- /bot o que é typescript?<br>",
+    
+        "/bot o que é algoritmo?": "Um algoritmo é uma sequência finita de ações executáveis que visam obter uma solução para um determinado tipo de problema.",
+        "/bot o que é javascript?": "JavaScript é uma linguagem de programação de alto nível, interpretada e orientada a objetos. É amplamente utilizada para criar páginas da web interativas e dinâmicas.",
+        "/bot qual a diferença entre java e javascript?": "Apesar dos nomes semelhantes, Java e JavaScript são linguagens de programação distintas. Java é uma linguagem de programação de propósito geral, enquanto JavaScript é uma linguagem de script principalmente usada para desenvolvimento web.",
+        "/bot o que é html?": "HTML (Hypertext Markup Language) é a linguagem padrão para criar páginas da web. Ele descreve a estrutura básica de uma página da web usando elementos HTML.",
+        "/bot qual o comando de git para fazer commit?": "O comando do Git para fazer commit é `git commit`. Este comando é usado para salvar as mudanças feitas no repositório Git.",
+        "/bot quais as permissões do chmod?": "O comando `chmod` é usado no sistema Unix e Unix-like para modificar as permissões de acesso aos arquivos. As permissões incluem ler, gravar e executar, e podem ser definidas para o proprietário do arquivo, o grupo associado ao arquivo e outros usuários.",
+        
+        "/bot quais as permissões do chmod?": "O comando `chmod` é usado no sistema Unix e Unix-like para modificar as permissões de acesso aos arquivos. As permissões incluem ler, gravar e executar, e podem ser definidas para o proprietário do arquivo, o grupo associado ao arquivo e outros usuários.",
+        "/bot como criar um repositório no github?": "Para criar um repositório no GitHub, você precisa fazer login na sua conta GitHub, clicar no botão '+' no canto superior direito e selecionar 'New repository'. Em seguida, siga as instruções para configurar o seu repositório.",
+        "/bot como criar um repositório no github?": "Para criar um repositório no GitHub, você precisa fazer login na sua conta GitHub, clicar no botão '+' no canto superior direito e selecionar 'New repository'. Em seguida, siga as instruções para configurar o seu repositório.",
+        "/bot o que é typescript?": "TypeScript é uma linguagem de programação de código aberto desenvolvida pela Microsoft. É uma superset da linguagem JavaScript e adiciona tipagem estática opcional, entre outras funcionalidades, o que ajuda a evitar erros comuns e a facilitar o desenvolvimento de grandes aplicativos JavaScript."
     };
-
-    // Verifica se o link é do Firebase Storage
-    function isFirebaseStorageURL(url) {
-        return url.startsWith('https://firebasestorage.googleapis.com/');
-    }
-
-    // Função para verificar se o conteúdo é uma URL de imagem
-    function isImageURL(url) {
-        return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
-    }
-
-    // Função para obter o timestamp do servidor
-    async function getServerTimestamp() {
-        try {
-            const response = await fetch('https://worldtimeapi.org/api/timezone/America/Sao_Paulo');
-            const data = await response.json();
-            return new Date(data.datetime).getTime(); // Convertendo para milissegundos
-        } catch (error) {
-            console.error('Erro ao obter timestamp do servidor:', error);
-            return Date.now(); // Fallback para timestamp local em caso de erro
-        }
-    }
-
-    // Login form submission
-    loginForm.addEventListener('submit', async function (e) {
+    
+    
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        userName = document.querySelector('.login__input').value;
-        userId = `user_${Date.now()}`;
-        userColor = colors[Math.floor(Math.random() * colors.length)];
-        document.querySelector('.login').style.display = 'none';
+        const email = loginForm.querySelector('.login__email').value;
+        const password = loginForm.querySelector('.login__password').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                userId = userCredential.user.uid;
+                userColor = colors[Math.floor(Math.random() * colors.length)];
+                ttElement.style.display = 'none';
+                container.classList.add('fullscreen');
+                loginForm.parentElement.style.display = 'none';
+                document.querySelector('.name-input').style.display = 'flex';
+            })
+            .catch((error) => {
+                console.error('Erro ao fazer login:', error.message);
+            });
+    });
+
+    registerButton.addEventListener('click', () => {
+        const email = loginForm.querySelector('.login__email').value;
+        const password = loginForm.querySelector('.login__password').value;
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                userId = userCredential.user.uid;
+                userColor = colors[Math.floor(Math.random() * colors.length)];
+                ttElement.style.display = 'none';
+                container.classList.add('fullscreen');
+                loginForm.parentElement.style.display = 'none';
+                document.querySelector('.name-input').style.display = 'flex';
+            })
+            .catch((error) => {
+                console.error('Erro ao registrar:', error.message);
+            });
+    });
+
+    nameInputForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        userName = nameInputForm.querySelector('.name-input__input').value;
+        document.querySelector('.name-input').style.display = 'none';
         document.querySelector('.chat').style.display = 'flex';
-        ttElement.style.display = 'none';
-        container.classList.add('fullscreen');
         loadMessages();
     });
 
-    // Chat form submission
-    chatForm.addEventListener('submit', async function (e) {
+    chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const messageInput = document.querySelector('.chat__input');
-        const messageText = messageInput.value;
-        if (messageText.trim() !== '') {
-            const isImage = isImageURL(messageText);
-            const timestamp = await getServerTimestamp();
-            if (messageText.trim() === '/clearall') {
+        const messageInput = chatForm.querySelector('.chat__input');
+        const message = messageInput.value;
+        const timestamp = new Date().toLocaleString();
+        
+        if (message.trim() !== '') {
+            if (message === '/clearall') {
                 clearAllMessages();
             } else {
-                sendMessage(messageText, isImage, timestamp);
-                checkBotResponse(messageText); // Chama a função checkBotResponse após enviar a mensagem
+                db.ref('messages').push({
+                    userId,
+                    userName,
+                    userColor,
+                    message,
+                    timestamp,
+                });
             }
             messageInput.value = '';
+            checkBotResponse(message);
         }
     });
 
-    // Load messages from the server in real-time
-    function loadMessages() {
-        db.ref("messages").orderByChild('timestamp').on('value', (snapshot) => {
-            messagesContainer.innerHTML = '';
-            if (snapshot.exists()) {
-                const messages = [];
-                snapshot.forEach((childSnapshot) => {
-                    const message = childSnapshot.val();
-                    messages.push(message);
-                });
-                messages.sort((a, b) => a.timestamp - b.timestamp);
-                messages.forEach((message) => {
-                    displayMessage(message);
-                });
-                scrollToLastMessage(); // Chame a função após carregar as mensagens
-            }
-        });
-    }
-
-    // Função para rolar para a última mensagem
-    function scrollToLastMessage() {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    // Função para esconder todas as mensagens anteriores a '/clearall'
     function clearAllMessages() {
-        messagesContainer.innerHTML = ''; // Esconde todas as mensagens no frontend
-        sendMessage('/clearall', false, Date.now()); // Envia a mensagem '/clearall' 
+        messagesContainer.innerHTML = '';
     }
 
-    // Send a message to the server
-    async function sendMessage(content, isImage, timestamp) {
-        const message = {
-            userId,
-            userName,
-            userColor,
-            content,
-            isImage,
-            timestamp
-        };
+    db.ref('messages').on('child_added', (snapshot) => {
+        const message = snapshot.val();
+        displayMessage(message);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
 
-        db.ref("messages").push(message)
-            .then(() => {
-                scrollToLastMessage(); // Chame a função após a mensagem ser enviada
-            })
-            .catch(error => console.error('Error sending message:', error));
-    }
-
-    // Display a message in the chat
-    function displayMessage(message) {
-        if (message.content === '/clearall' && message.userId === userId) {
-            // Oculta todas as mensagens anteriores a '/clearall' para o usuário atual
-            messagesContainer.innerHTML = '';
-        }
-
+    function displayMessage({ userId: senderId, userName, userColor, message, timestamp }) {
         const messageElement = document.createElement('div');
-        messageElement.className = message.userId === userId ? 'message-self' : 'message-other';
-
-        const userNameElement = document.createElement('div');
-        userNameElement.style.color = message.userColor;
-        userNameElement.textContent = message.userName;
-        userNameElement.className = 'message-username';
-
-        const messageContentElement = document.createElement('div');
-        messageContentElement.style.color = 'white';
-        messageContentElement.className = 'message-content';
-
-        if (!message.isImage || !isFirebaseStorageURL(message.content)) {
-            messageContentElement.innerHTML = message.content;
-        } else {
-            const imgContainer = document.createElement('div');
-            imgContainer.classList.add('message-img-container');
-
-            const imgElement = document.createElement('img');
-            imgElement.src = message.content;
-            imgElement.alt = "Image";
-            imgElement.classList.add('message-img');
-
-            imgContainer.appendChild(imgElement);
-            messageContentElement.appendChild(imgContainer);
-        }
-
-        messageElement.appendChild(userNameElement);
-        messageElement.appendChild(messageContentElement);
+        messageElement.classList.add(senderId === userId ? 'message-self' : 'message-other');
+        messageElement.innerHTML = `
+            <span class="message-username" style="color: ${userColor}">${userName} - ${timestamp}</span>
+            <span class="message-content">${message}</span>
+        `;
         messagesContainer.appendChild(messageElement);
-
-        scrollToLastMessage(); // Chame a função após adicionar a mensagem ao contêiner
     }
 
-    // Check for bot response
-    function checkBotResponse(messageText) {
-        const lowerCaseMessage = messageText.toLowerCase();
-        if (responses.hasOwnProperty(lowerCaseMessage)) {
-            const botResponse = responses[lowerCaseMessage];
-            const botMessage = {
-                userId: 'bot',
-                userName: 'ChatCodeBot',
-                userColor: 'lightblue',
-                content: botResponse,
-                isImage: false,
-                timestamp: Date.now()
-            };
-            setTimeout(() => {
-                db.ref("messages").push(botMessage);
-            }, 1000);
-        }
-    }
-
-    // Code popup functionality
     codeButton.addEventListener('click', () => {
         codePopup.style.display = 'flex';
     });
@@ -253,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             codeConsole.innerHTML += `Error: ${error.message}`;
         } finally {
-            console.log = originalConsoleLog; // Restaura o console.log original
+            console.log = originalConsoleLog;
         }
     }
     
@@ -265,32 +201,57 @@ document.addEventListener('DOMContentLoaded', function () {
             throw error;
         }
     }
-    
 
-    // Image button click event
-    imageButton.addEventListener('click', function () {
+    imageButton.addEventListener('click', () => {
         imageInput.click();
     });
 
-    // Image input change event
-    imageInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
         if (file) {
-            const storageRef = storage.ref(`images/${file.name}`);
-            const uploadTask = storageRef.put(file);
-
-            uploadTask.on('state_changed',
-                function (snapshot) {
-                    // Progress
-                },
-                function (error) {
-                    console.error('Error uploading image:', error);
-                },
-                async function () {
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    sendMessage(downloadURL, true, await getServerTimestamp());
-                }
-            );
+            const storageRef = storage.ref('images/' + file.name);
+            storageRef.put(file).then(() => {
+                storageRef.getDownloadURL().then((url) => {
+                    const messageInput = chatForm.querySelector('.chat__input');
+                    const timestamp = new Date().toLocaleString();
+                    
+                    db.ref('messages').push({
+                        userId,
+                        userName,
+                        userColor,
+                        message: `<div class="message-img-container"><img src="${url}" class="message-img"></div>`,
+                        timestamp,
+                    });
+                });
+            });
         }
     });
+
+    function loadMessages() {
+        db.ref('messages').once('value', (snapshot) => {
+            const messages = snapshot.val();
+            for (let id in messages) {
+                displayMessage(messages[id]);
+            }
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    }
+
+    // Check for bot responses
+    function checkBotResponse(messageText) {
+        const lowerCaseMessage = messageText.toLowerCase();
+        if (responses.hasOwnProperty(lowerCaseMessage)) {
+            const botResponse = responses[lowerCaseMessage];
+            const botMessage = {
+                userId: 'bot',
+                userName: 'ChatCodeBot',
+                userColor: 'lightblue',
+                message: botResponse,
+                timestamp: new Date().toLocaleString(),
+            };
+            setTimeout(() => {
+                db.ref('messages').push(botMessage);
+            }, 1000);
+        }
+    }
 });
