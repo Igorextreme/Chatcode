@@ -280,7 +280,7 @@ body {
     .chat__send-button,
     .chat__code-button,
     .chat__image-button {
-        flex-basis: calc(13.33% - 0.08rem); /* Define a base de tamanho dos botões */
+        flex-basis: calc(1% - 0.08rem); /* Define a base de tamanho dos botões */
         margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
     }
 }
