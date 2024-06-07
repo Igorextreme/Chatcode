@@ -228,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function loadMessages() {
+        messagesContainer.innerHTML = ''; // Limpar mensagens ao carregar novamente
         db.ref('messages').once('value', (snapshot) => {
             const messages = snapshot.val();
             for (let id in messages) {
@@ -236,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
     }
+    
 
     // Check for bot responses
     function checkBotResponse(messageText) {
