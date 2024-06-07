@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const messageElement = document.createElement('div');
         messageElement.classList.add(senderId === userId ? 'message-self' : 'message-other');
         messageElement.innerHTML = `
-            <span class="message-username" style="color: ${userColor}">${userName} - ${timestamp}</span>
+            <span class="message-username" style="color: ${userColor}">${userName}</span>
             <span class="message-content">${message}</span>
         `;
         messagesContainer.appendChild(messageElement);
