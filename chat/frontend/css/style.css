@@ -278,7 +278,10 @@ body {
         width: calc(50% - 1rem); /* Ajusta a largura do campo de entrada */
     }
 
-    .chat__send-button,
+    .chat__send-button{
+        width: calc(50% - 1.5rem); /* Ajusta a largura dos botões */
+        margin-bottom: 1rem;
+    }
     .chat__code-button,
     .chat__image-button {
         width: calc(33.33% - 1rem); /* Ajusta a largura dos botões */
