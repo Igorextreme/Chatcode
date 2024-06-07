@@ -260,30 +260,27 @@ body {
     height: calc(100vh - 80px); /* Ajusta a altura do chat__messages considerando a altura do chat__form */
 }
 
-
 /* Media Queries */
-/* Media Query para dispositivos menores */
 @media (max-width: 768px) {
+    .container {
+        height: calc(100vh - 100px);
+    }
+    
     .chat__form {
-        flex-direction: column; /* Altera a direção para coluna para facilitar a adaptação em dispositivos menores */
+        display: flex;
+        flex-wrap: wrap; /* Permitir que os itens quebrem para a próxima linha */
+        justify-content: space-between; /* Distribui os elementos horizontalmente */
     }
 
     .chat__input {
         width: calc(100% - 2rem); /* Define a largura do input da mensagem */
-        margin-bottom: 1rem; /* Adiciona margem inferior para separar o input dos botões */
+        margin-bottom: 1rem; 
     }
 
     .chat__send-button,
     .chat__code-button,
     .chat__image-button {
-        width: calc(33.33% - 0.67rem); /* Define a largura dos botões */
-        margin-right: 0.67rem; /* Adiciona margem direita para separar os botões */
+        flex-basis: calc(33.33% - 1rem); /* Define a base de tamanho dos botões */
         margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
-    }
-
-    .chat__send-button:last-child,
-    .chat__code-button:last-child,
-    .chat__image-button:last-child {
-        margin-right: 0; /* Remove a margem direita do último botão */
     }
 }
