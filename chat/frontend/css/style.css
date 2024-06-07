@@ -98,6 +98,8 @@ body {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     margin-left: 10px; /* Espaçamento entre os botões */
     align-items: center; /* Alinha os itens verticalmente */
+    width: 80%; /* Faz os botões ocuparem 90% da largura do contêiner pai */
+    max-width: 300px; /
 }
 
 
