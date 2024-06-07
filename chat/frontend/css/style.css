@@ -259,47 +259,57 @@ body {
 .fullscreen .chat__messages {
     height: calc(100vh - 80px); /* Ajusta a altura do chat__messages considerando a altura do chat__form */
 }
-@media (max-width: 600px) {
-    .login__form, .chat__form {
+
+@media (max-width: 768px) {
+    .tt {
         flex-direction: column;
         align-items: center;
+        padding: 0.5rem;
     }
 
-    .login__input, .chat__input {
-        width: calc(100% - 2rem); /* Ajusta a largura do input */
+    .tt__title {
+        font-size: 1.2rem;
+    }
+
+    .container {
+        height: calc(100vh - 60px);
+    }
+
+    .login__email, .login__password, .name-input__input {
+        width: 80%;
         margin: 0 0 1rem 0;
+    }
+
+    .login__input {
+        width: 100%;
         text-align: center;
     }
 
-    .login__button,
-    .register__button,
-    .name-input__button,
-    .chat__button,
-    .chat__code-button,
-    .chat__image-button,
-    .code-popup__close-button,
-    .code-popup__button {
-        width: calc(100% - 2rem); /* Ajusta a largura dos botões */
-        padding: 0.8rem 1rem;
-        margin-bottom: 1rem;
-        box-sizing: border-box;
-        text-align: center;
+    .chat__messages {
+        padding: 0.5rem;
+        gap: 0.5rem;
     }
 
-    .chat__form {
-        flex-direction: column;
-        align-items: center;
+    .message-self, .message-other {
+        padding: 0.5rem;
+        font-size: 0.875rem;
     }
 
-    .chat__input {
-        width: calc(100% - 2rem); /* Ajusta a largura do input */
-        margin: 0 0 1rem 0;
+    .code-popup__content {
+        width: 90%;
+        padding: 1rem;
     }
 
-    .chat__button,
-    .chat__code-button,
-    .chat__image-button {
-        width: calc(100% - 2rem); /* Ajusta a largura dos botões */
-        margin: 0 0 1rem 0;
+    .code-popup__textarea {
+        height: 150px;
+    }
+
+    .login__button, .register__button, .name-input__button, .chat__button, .chat__code-button, .chat__image-button, .code-popup__close-button, .code-popup__button {
+        padding: 0.5rem 2rem;
+        border-radius: 8px;
+        margin-left: 0; /* Remove a margem à esquerda */
+        margin-bottom: 1rem; /* Adiciona margem inferior para espaçamento */
+        width: 90%; /* Faz os botões ocuparem 90% da largura do contêiner pai */
+        max-width: 300px; /* Define uma largura máxima para os botões */
     }
 }
