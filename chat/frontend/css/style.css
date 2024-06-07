@@ -304,12 +304,19 @@ body {
         height: 150px;
     }
 
-    .login__button, .register__button, .name-input__button, .chat__button, .chat__code-button, .chat__image-button, .code-popup__close-button, .code-popup__button {
+    .login__button, .register__button, .name-input__button{
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        margin-left: 0; /* Remove a margem à esquerda */
+        margin-bottom: 1rem; /* Adiciona margem inferior para espaçamento */
+        width: 90%; /* Faz os botões ocuparem 90% da largura do contêiner pai */
+        max-width: 300px; /* Define uma largura máxima para os botões */
+    }
+    } .chat__button, .chat__code-button, .chat__image-button, .code-popup__close-button, .code-popup__button {
         padding: 0.5rem 0.5rem;
         border-radius: 8px;
         margin-left: 0; /* Remove a margem à esquerda */
         margin-bottom: 1rem; /* Adiciona margem inferior para espaçamento */
         width: 90%; /* Faz os botões ocuparem 90% da largura do contêiner pai */
-        max-width: 30px; /* Define uma largura máxima para os botões */
+        max-width: 100px; /* Define uma largura máxima para os botões */
     }
-}
