@@ -269,22 +269,20 @@ body {
     }
     
     .chat__form {
-        flex-direction: row; /* Altera para layout em linha */
-        justify-content: space-between; /* Distribui os botões horizontalmente */
+        display: flex;
+        flex-wrap: wrap; /* Permitir que os itens quebrem para a próxima linha */
+        justify-content: space-between; /* Distribui os elementos horizontalmente */
     }
 
     .chat__input {
+        flex-grow: 2; /* Ocupa mais espaço disponível */
         margin-right: 1rem; /* Adiciona margem à direita para separar os botões */
-        width: calc(50% - 1rem); /* Ajusta a largura do campo de entrada */
     }
 
-    .chat__send-button{
-        width: calc(50% - 1.5rem); /* Ajusta a largura dos botões */
-        margin-bottom: 1rem;
-    }
+    .chat__send-button,
     .chat__code-button,
     .chat__image-button {
-        width: calc(33.33% - 1rem); /* Ajusta a largura dos botões */
+        flex-basis: calc(33.33% - 1rem); /* Define a base de tamanho dos botões */
         margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
     }
 }
