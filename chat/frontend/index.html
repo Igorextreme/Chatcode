@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="frontend/css/style.css">
     <link rel="shortcut icon" href="./images/web-chat.png" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <title>ChatCode</title>
 </head>
 <body>
@@ -49,12 +50,14 @@
             <form class="chat__form">
                 <input type="text" class="chat__input" placeholder="Digite uma mensagem" required />
                 <button type="submit" class="chat__button">
-                    <span class="material-symbols-outlined">send</span>
+                    <i class="fas fa-paper-plane"></i>
                 </button>
-                <button type="button" class="chat__code-button">Code</button>
+                <button type="button" class="chat__code-button">
+                    <i class="fas fa-code"></i>
+                </button>
                 <input type="file" id="imageInput" style="display:none;" />
                 <button type="button" class="chat__image-button">
-                    <span class="material-symbols-outlined">image</span>
+                    <i class="fas fa-image"></i>
                 </button>
             </form>
             
