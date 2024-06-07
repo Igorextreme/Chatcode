@@ -260,27 +260,53 @@ body {
     height: calc(100vh - 80px); /* Ajusta a altura do chat__messages considerando a altura do chat__form */
 }
 
-/* Media Queries */
+/* Media Queries para dispositivos menores */
 @media (max-width: 768px) {
+    .tt {
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+    }
+
+    .tt__title {
+        font-size: 1.2rem;
+    }
+
     .container {
-        height: calc(100vh - 100px);
-    }
-    
-    .chat__form {
-        display: flex;
-        flex-wrap: wrap; /* Permitir que os itens quebrem para a próxima linha */
-        justify-content: space-between; /* Distribui os elementos horizontalmente */
+        height: calc(100vh - 60px);
     }
 
-    .chat__input {
-        width: calc(100% - 2rem); /* Define a largura do input da mensagem */
-        margin-bottom: 1rem; 
+    .login__email, .login__password, .name-input__input {
+        width: 80%;
+        margin: 0 0 1rem 0;
     }
 
-    .chat__send-button,
-    .chat__code-button,
-    .chat__image-button {
-        flex-basis: calc(1% - 0.08rem); /* Define a base de tamanho dos botões */
-        margin-bottom: 1rem; /* Adiciona margem inferior para separar os botões */
+    .login__input {
+        width: 100%;
+        text-align: center;
+    }
+
+    .chat__messages {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .message-self, .message-other {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .code-popup__content {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .code-popup__textarea {
+        height: 150px;
+    }
+
+    .login__button, .register__button, .name-input__button, .chat__button, .chat__code-button, .chat__image-button, .code-popup__close-button, .code-popup__button {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
     }
 }
