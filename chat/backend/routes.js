@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { PythonShell } = require('python-shell');
 const verifyToken = require('./verifyToken'); // Adicione o caminho correto para o middleware de verificação de token
 
 module.exports = (upload, db) => {
@@ -35,6 +36,24 @@ module.exports = (upload, db) => {
     db.ref("messages").once('value')
       .then(snapshot => res.status(200).json(snapshot.val()))
       .catch(error => res.status(500).json({ error: error.message }));
+  });
+
+  // Endpoint para executar código Python
+  router.post('/execute-python', (req, res) => {
+    const code = req.body.code;
+
+    let options = {
+      mode: 'text',
+      pythonOptions: ['-c'],
+      args: [code]
+    };
+
+    PythonShell.runString(code, options, function (err, results) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json({ output: results ? results.join('\n') : '' });
+    });
   });
 
   return router;

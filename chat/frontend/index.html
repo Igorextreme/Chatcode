@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/4.6.2/typescript.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
     <div class="tt">
-        <svg class="tt__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  width="24" height="24">
+        <svg class="tt__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
             <path d="M0 0h24v24H0z" fill="none"/>
             <path d="M21 3H3c-1.1 0-1.99.9-1.99 2L1 19l4-4h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H5.83L3 17.17V5h18v12z"/>
         </svg>
@@ -70,12 +70,13 @@
                     <select class="code-popup__language-selector">
                         <option value="javascript">JavaScript</option>
                         <option value="typescript">TypeScript</option>
+                        <option value="python">Python</option>
                     </select>
                     <!-- Contêiner para o textarea e a numeração das linhas -->
                     <div class="code-popup__code-container">
                         <!-- Numeração das linhas -->
                         <div class="code-popup__line-numbers"></div>
-                        <!-- Textarea para inserir código JavaScript ou TypeScript -->
+                        <!-- Textarea para inserir código JavaScript, TypeScript ou Python -->
                         <textarea class="code-popup__textarea" placeholder="Insira seu código aqui"></textarea>
                         <pre class="code-popup__highlighting"></pre>
                     </div>

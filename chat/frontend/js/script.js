@@ -185,6 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (result !== undefined) {
                     codeConsole.innerHTML += result;
                 }
+            } else if (language === 'python') {
+                executePython(code);
             }
         } catch (error) {
             codeConsole.innerHTML += `Error: ${error.message}`;
@@ -192,6 +194,31 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log = originalConsoleLog;
         }
     }
+    
+    function executePython(code) {
+        fetch('/api/execute-python', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const { output, error } = data;
+            if (output) {
+                codeConsole.innerHTML += output.replace(/\n/g, '<br>');
+            }
+            if (error) {
+                codeConsole.innerHTML += `<span style="color: red;">${error.replace(/\n/g, '<br>')}</span>`;
+            }
+        })
+        .catch(error => {
+            codeConsole.innerHTML += `<span style="color: red;">${error.message}</span>`;
+        });
+    }
+    
+    
     
     function executeJavaScript(code) {
         try {

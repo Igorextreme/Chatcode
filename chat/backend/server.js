@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const { exec } = require('child_process');
 const { db } = require('./firebaseConfig');
 const routes = require('./routes');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
@@ -26,7 +27,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Limite de 50MB
 
 // Rotas
-app.use('/api', routes(upload));
+app.use('/api', routes(upload, db));
 
 // Rota para limpar todas as mensagens
 app.post('/clearall', (req, res) => {
@@ -38,6 +39,25 @@ app.post('/clearall', (req, res) => {
       console.error('Error clearing messages:', error);
       res.status(500).send({ error: 'Failed to clear messages' });
     });
+});
+
+// Endpoint para executar código Python
+app.post('/api/execute-python', (req, res) => {
+  const { code } = req.body;
+
+  // Salvar o código em um arquivo temporário
+  const fs = require('fs');
+  const tempFileName = 'temp_code.py';
+  fs.writeFileSync(tempFileName, code);
+
+  // Executar o arquivo Python
+  exec(`python ${tempFileName}`, (error, stdout, stderr) => {
+    fs.unlinkSync(tempFileName); // Apagar o arquivo temporário
+    if (error) {
+      return res.status(500).json({ error: stderr });
+    }
+    res.status(200).json({ output: stdout });
+  });
 });
 
 // Middleware de tratamento de erros
