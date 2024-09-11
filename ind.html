@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="frontend/css/style.css">
+    <link rel="shortcut icon" href="./images/web-chat.png" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>ChatCode</title>
+</head>
+<body>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/4.6.2/typescript.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <div class="tt">
+        <svg class="tt__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M21 3H3c-1.1 0-1.99.9-1.99 2L1 19l4-4h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H5.83L3 17.17V5h18v12z"/>
+        </svg>
+        <h1 class="tt__title">ChatCode</h1>
+    </div>
+    
+    <section class="container">
+        <section class="login">
+            <h2>Login</h2>
+            <form class="login__form">
+                <input type="email" class="login__email" placeholder="Email" required />
+                <input type="password" class="login__password" placeholder="Senha" required />
+                <button type="submit" class="login__button">Entrar</button>
+                <button type="button" class="register__button">Registrar</button>
+            </form>
+
+            <!-- Botão de login com Google -->
+            <button type="button" id="google-signin-button" class="google-login-button">Entrar com Google</button>
+
+
+        </section>
+
+        <section class="register" style="display: none;">
+            <h2>Registrar</h2>
+            <button class="email-register-button">Registrar com Email e Senha</button>
+            <button class="google-register-button">Registrar com Google</button>
+            <button class="back-to-login-button">Voltar</button>
+        </section>
+    
+        <section class="email-register" style="display: none;">
+            <h2>Cadastro com Email e Senha</h2>
+            <form class="email-register__form">
+                <input type="email" class="register__email" placeholder="Email" required />
+                <input type="password" class="register__password" placeholder="Senha" required />
+                <button type="submit" class="register__button">Registrar</button>
+            </form>
+            <button class="back-to-register-button">Voltar</button>
+        </section>
+
+        <section class="name-input" style="display: none;">
+            <h2>Digite seu nome</h2>
+            <form class="name-input__form">
+                <input type="text" class="name-input__input" placeholder="Seu nome" required />
+                <button type="submit" class="name-input__button">Entrar no chat</button>
+            </form>
+        </section>
+
+        <section class="chat" style="display: none;">
+            <section class="chat__messages">
+                <!-- Mensagens do chat serão exibidas aqui -->
+            </section>
+
+            <form class="chat__form">
+                <input type="text" class="chat__input" placeholder="Digite uma mensagem" required />
+                <button type="submit" class="chat__button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button type="button" class="chat__code-button">
+                    <i class="fas fa-code"></i>
+                </button>
+                <input type="file" id="imageInput" style="display:none;" />
+                <button type="button" class="chat__image-button">
+                    <i class="fas fa-image"></i>
+                </button>
+            </form>
+            
+            <!-- Tela de código -->
+            <div class="code-popup" id="code-popup">
+                <div class="code-popup__content">
+                    <!-- Botão de fechar -->
+                    <button class="code-popup__close-button">❌</button>
+                    <h2>Coloque seu código</h2>
+                    <select class="code-popup__language-selector">
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="python">Python</option>
+                    </select>
+                    <!-- Contêiner para o textarea e a numeração das linhas -->
+                    <div class="code-popup__code-container">
+                        <!-- Numeração das linhas -->
+                        <div class="code-popup__line-numbers"></div>
+                        <!-- Textarea para inserir código JavaScript, TypeScript ou Python -->
+                        <textarea class="code-popup__textarea" placeholder="Insira seu código aqui"></textarea>
+                        <pre class="code-popup__highlighting"></pre>
+                    </div>
+                    <!-- Botão para executar o código inserido -->
+                    <button class="code-popup__button">Executar</button>
+                    <!-- Elemento para exibir a saída do console -->
+                    <div class="code-popup__console" id="code-popup-console"></div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
