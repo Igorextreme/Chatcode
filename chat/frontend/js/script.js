@@ -361,19 +361,21 @@ chatForm.addEventListener('submit', (e) => {
     }
 });
 
+
 async function sendMessageToBot(userMessage) {
     try {
-        const response = await fetch('/api/send-message', {
+        const response = await fetch('https://chatcode-back.onrender.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: 
-            JSON.stringify({ message: userMessage }),
+            body: JSON.stringify({ message: userMessage }),
         });
 
         // Verifique se a resposta é ok
-    
+        if (!response.ok) {
+            throw new Error(`Erro na resposta do servidor: ${response.status} ${response.statusText}`);
+        }
 
         const data = await response.json();
         if (!data.response) {
@@ -382,10 +384,11 @@ async function sendMessageToBot(userMessage) {
 
         return data.response;
     } catch (error) {
-        
+        console.error(error); // Adiciona log para ajudar no diagnóstico
         return "Desculpe, ocorreu um erro ao tentar responder sua pergunta.";
     }
 }
+
 
 
     function clearAllMessages() {

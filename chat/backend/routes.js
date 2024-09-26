@@ -22,42 +22,44 @@ module.exports = (upload, db) => {
     const timestamp = Date.now();
 
     if (message.startsWith('/bot')) {
-      try {
-        // Remove o "/bot" e envia o restante como prompt para o Gemini
-        const userPrompt = message.replace('/bot', '').trim();
-        const result = await chat.sendMessage(userPrompt);
-        const resultText = result.response.text();
-        return res.status(200).json({ response: resultText });
-        return res.status(200).json({ response: result.response.text() });
-      } catch (error) {
-        console.error('Erro ao gerar resposta do Gemini:', error);
-        return res.status(500).json({ error: 'Erro ao gerar resposta do bot.' });
-      }
+        try {
+            // Remove o "/bot" e envia o restante como prompt para o Gemini
+            const userPrompt = message.replace('/bot', '').trim();
+            const result = await chat.sendMessage(userPrompt);
+
+            // Verifica se a resposta é válida
+            const resultText = result.response?.text() || "Desculpe, não consegui entender.";
+            return res.status(200).json({ response: resultText });
+        } catch (error) {
+            console.error('Erro ao gerar resposta do Gemini:', error);
+            return res.status(500).json({ error: 'Erro ao gerar resposta do bot.' });
+        }
     } else {
-      // Mensagem normal: salvar no banco de dados
-      const chatMessage = {
-        userId,
-        userName,
-        userColor,
-        message,
-        isImage: isImage || false,
-        timestamp,
-      };
-
-      if (req.file) {
-        // Se houver um arquivo, adicioná-lo à mensagem
-        chatMessage.image = {
-          data: req.file.buffer,
-          contentType: req.file.mimetype,
-          filename: req.file.originalname
+        // Mensagem normal: salvar no banco de dados
+        const chatMessage = {
+            userId,
+            userName,
+            userColor,
+            message,
+            isImage: isImage || false,
+            timestamp,
         };
-      }
 
-      db.ref("messages").push(chatMessage)
-        .then(() => res.status(200).json({ message: "Message sent successfully" }))
-        .catch(error => res.status(500).json({ error: error.message }));
+        if (req.file) {
+            // Se houver um arquivo, adicioná-lo à mensagem
+            chatMessage.image = {
+                data: req.file.buffer,
+                contentType: req.file.mimetype,
+                filename: req.file.originalname
+            };
+        }
+
+        db.ref("messages").push(chatMessage)
+            .then(() => res.status(200).json({ message: "Message sent successfully" }))
+            .catch(error => res.status(500).json({ error: error.message }));
     }
-  });
+});
+
 
   // Endpoint para obter mensagens
   router.get('/get-messages', verifyToken, (req, res) => {
