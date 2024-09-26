@@ -55,100 +55,62 @@ document.addEventListener('DOMContentLoaded', function () {
     const storage = firebase.storage();
 const database = firebase.database();
 
-   // Função para enviar uma mensagem ao bot e receber uma resposta
+
 async function sendMessageToBot(userMessage) {
     if (!userMessage.trim().startsWith('/bot')) {
-      return "Para interagir com o bot, inicie sua mensagem com '/bot'.";
+        return "Para interagir com o bot, inicie sua mensagem com '/bot'.";
     }
-  
+
     try {
-      const response = await fetch('http://localhost:3001/api/bot/message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage }),
-      });
-  
-      const data = await response.json();
-      return data.response;
+        const response = await fetch('http://localhost:3001/api/bot/message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userMessage }),
+        });
+
+        const data = await response.json();
+        return data.response;
     } catch (error) {
-      console.error('Erro ao comunicar com o bot:', error);
-      return 'Desculpe, ocorreu um erro ao processar sua mensagem.';
+        console.error('Erro ao comunicar com o bot:', error);
+        return 'Desculpe, ocorreu um erro ao processar sua mensagem.';
     }
-  }
-  
-  // Função para lidar com o envio de mensagens
-  async function handleUserMessage(event) {
+}
+
+function addMessageToChat(sender, message) {
+    const chatMessages = document.querySelector('.chat__messages');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', sender.toLowerCase());
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function handleUserMessage(event) {
     event.preventDefault(); // Previne o recarregamento da página
-  
+
     const userMessage = document.querySelector('.chat__input').value.trim();
-    const chatWindow = document.querySelector('.chat__form');
-  
+
     // Exibir a mensagem do usuário no chat
     addMessageToChat("Você", userMessage);
-  
+
     let botResponse;
     if (userMessage.startsWith('/bot')) {
-      // Se a mensagem começa com "/bot", chamar a API do Gemini
-      botResponse = await sendMessageToBot(userMessage);
+        botResponse = await sendMessageToBot(userMessage);
     } else {
-      // Resposta para mensagens que não começam com "/bot"
-      botResponse = "Mensagem recebida! Para interagir com o bot, inicie sua mensagem com '/bot'.";
+        botResponse = "Mensagem recebida! Para interagir com o bot, inicie sua mensagem com '/bot'.";
     }
-  
+
     // Adicionar a resposta do bot ao chat
     addMessageToChat("Bot", botResponse);
-  
+
     // Limpar o campo de entrada
     document.querySelector('.chat__input').value = '';
-  }
-  
-  // Função para adicionar mensagens ao chat
-  function addMessageToChat(sender, message) {
-    const chatWindow = document.querySelector('.chat__form');
-    const messageElement = document.createElement('div');
-    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-    chatWindow.appendChild(messageElement);
-  }
-  
-  // Função para lidar com o envio de código
-  function handleCodeMessage() {
-    addMessageToChat("Você", "Iniciando o modo de envio de código...");
-    const codeMessage = prompt("Digite o código que você deseja enviar:");
-    
-    if (codeMessage) {
-      addMessageToChat("Você", codeMessage);
-    }
-  }
-  
-  // Função para lidar com o envio de imagens
-  function handleImageUpload(event) {
-    const imageInput = document.getElementById('imageInput');
-  
-    // Verificar se um arquivo foi selecionado
-    if (imageInput.files && imageInput.files[0]) {
-      const reader = new FileReader();
-      
-      reader.onload = function (e) {
-        // Exibir a imagem carregada no chat
-        const chatWindow = document.querySelector('.chat__form');
-        const imageElement = document.createElement('img');
-        imageElement.src = e.target.result;
-        imageElement.style.maxWidth = '200px';
-        chatWindow.appendChild(imageElement);
-      };
-      
-      reader.readAsDataURL(imageInput.files[0]);
-    }
-  }
-  
-  // Adicionar eventos
-  document.querySelector('.chat__form').addEventListener('submit', handleUserMessage);
-  document.querySelector('.chat__code-button').addEventListener('click', handleCodeMessage);
-  document.querySelector('.chat__image-button').addEventListener('click', () => document.getElementById('imageInput').click());
-  document.getElementById('imageInput').addEventListener('change', handleImageUpload);
-  
+}
+
+document.getElementById('chatForm').addEventListener('submit', handleUserMessage);
+
 
 
 // Função de login com email e senha

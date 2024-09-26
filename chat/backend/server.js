@@ -1,12 +1,9 @@
+// Importações
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const multer = require('multer');
-const { db } = require('./firebaseConfig');
-const routes = require('./routes');
-const fs = require('fs');
-const path = require('path');
-const PORT = process.env.PORT || 3001;
+const { db } = require('./firebaseConfig'); // Certifique-se de que sua configuração do Firebase está correta
+const routes = require('./routes'); // Importe suas rotas conforme a necessidade
 
 // Importar a biblioteca do Google Generative AI
 const {
@@ -16,7 +13,7 @@ const {
 } = require("@google/generative-ai");
 
 // Definir a chave da API Gemini
-const apiKey = "AIzaSyBVJmQC1FCnqb4vknJ9GPHHa2ZCVgF3Hng";
+const apiKey = "SUA_API_KEY_AQUI"; // Substitua por sua chave de API
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -34,14 +31,18 @@ const generationConfig = {
 
 // Função para enviar a mensagem ao Gemini e receber a resposta
 async function getBotResponse(userMessage) {
-  const chatSession = model.startChat({
-    generationConfig,
-    history: [{ user: userMessage }],
-  });
-
   try {
+    const chatSession = await model.startChat({
+      generationConfig,
+      history: [{ user: userMessage }],
+    });
+
     const result = await chatSession.sendMessage(userMessage);
-    return result.response.text();
+    if (result && result.response) {
+      return result.response.text; // Retorna a resposta do bot
+    } else {
+      return "Nenhuma resposta foi recebida do bot.";
+    }
   } catch (error) {
     console.error("Erro ao obter resposta do Gemini:", error);
     return "Desculpe, não consegui processar sua pergunta no momento.";
@@ -64,12 +65,8 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// Configurar multer para uploads de arquivos
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Limite de 50MB
-
 // Rotas
-app.use('/api', routes(upload, db));
+app.use('/api', routes);
 
 // Rota para limpar todas as mensagens
 app.post('/clearall', (req, res) => {
@@ -106,6 +103,8 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Something went wrong!' });
 });
 
+// Iniciar o servidor
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
