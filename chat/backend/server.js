@@ -13,7 +13,7 @@ const {
 } = require("@google/generative-ai");
 
 // Definir a chave da API Gemini
-const apiKey = "SUA_API_KEY_AQUI"; // Substitua por sua chave de API
+const apiKey = "AIzaSyBVJmQC1FCnqb4vknJ9GPHHa2ZCVgF3Hng"; // Substitua por sua chave de API
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
