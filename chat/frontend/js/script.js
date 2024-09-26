@@ -54,63 +54,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const auth = firebase.auth();
     const storage = firebase.storage();
 const database = firebase.database();
+const responses = {
+    "/bot": "Olá! Sou o Robozão dos Cria de ADS. Posso ajudar com alguns dos comandos abaixo:<br>" +
+        "<br>- /bot o que é algoritmo?<br>" +
+        "- /bot o que é javascript?<br>" +
+        "- /bot qual a diferença entre java e javascript?<br>" +
+        "- /bot o que é html?<br>" +
+        "- /bot qual o comando de git para fazer commit?<br>" +
+        "- /bot quais as permissões do chmod?<br>" +
+        "- /bot como criar um repositório no github?<br>" +
+        "- /bot o que é typescript?<br>",
 
-
-async function sendMessageToBot(userMessage) {
-    if (!userMessage.trim().startsWith('/bot')) {
-        return "Para interagir com o bot, inicie sua mensagem com '/bot'.";
-    }
-
-    try {
-        const response = await fetch('http://localhost:3001/api/bot/message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ message: userMessage }),
-        });
-
-        const data = await response.json();
-        return data.response;
-    } catch (error) {
-        console.error('Erro ao comunicar com o bot:', error);
-        return 'Desculpe, ocorreu um erro ao processar sua mensagem.';
-    }
-}
-
-function addMessageToChat(sender, message) {
-    const chatMessages = document.querySelector('.chat__messages');
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', sender.toLowerCase());
-    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-async function handleUserMessage(event) {
-    event.preventDefault(); // Previne o recarregamento da página
-
-    const userMessage = document.querySelector('.chat__input').value.trim();
-
-    // Exibir a mensagem do usuário no chat
-    addMessageToChat("Você", userMessage);
-
-    let botResponse;
-    if (userMessage.startsWith('/bot')) {
-        botResponse = await sendMessageToBot(userMessage);
-    } else {
-        botResponse = "Mensagem recebida! Para interagir com o bot, inicie sua mensagem com '/bot'.";
-    }
-
-    // Adicionar a resposta do bot ao chat
-    addMessageToChat("Bot", botResponse);
-
-    // Limpar o campo de entrada
-    document.querySelector('.chat__input').value = '';
-}
-
-document.getElementById('chatForm').addEventListener('submit', handleUserMessage);
-
+    "/bot o que é algoritmo?": "Um algoritmo é uma sequência finita de ações executáveis que visam obter uma solução para um determinado tipo de problema.",
+    "/bot o que é javascript?": "JavaScript é uma linguagem de programação de alto nível, interpretada e orientada a objetos. É amplamente utilizada para criar páginas da web interativas e dinâmicas.",
+    "/bot qual a diferença entre java e javascript?": "Apesar dos nomes semelhantes, Java e JavaScript são linguagens de programação distintas. Java é uma linguagem de programação de propósito geral, enquanto JavaScript é uma linguagem de script principalmente usada para desenvolvimento web.",
+    "/bot o que é html?": "HTML (Hypertext Markup Language) é a linguagem padrão para criar páginas da web. Ele descreve a estrutura básica de uma página da web usando elementos HTML.",
+    "/bot qual o comando de git para fazer commit?": "O comando do Git para fazer commit é `git commit`. Este comando é usado para salvar as mudanças feitas no repositório Git.",
+    "/bot quais as permissões do chmod?": "O comando `chmod` é usado no sistema Unix e Unix-like para modificar as permissões de acesso aos arquivos. As permissões incluem ler, gravar e executar, e podem ser definidas para o proprietário do arquivo, o grupo associado ao arquivo e outros usuários.",
+    
+    "/bot como criar um repositório no github?": "Para criar um repositório no GitHub, você precisa fazer login na sua conta GitHub, clicar no botão '+' no canto superior direito e selecionar 'New repository'. Em seguida, siga as instruções para configurar o seu repositório.",
+    "/bot o que é typescript?": "TypeScript é uma linguagem de programação de código aberto desenvolvida pela Microsoft. É uma superset da linguagem JavaScript e adiciona tipagem estática opcional, entre outras funcionalidades, o que ajuda a evitar erros comuns e a facilitar o desenvolvimento de grandes aplicativos JavaScript."
+};
 
 
 // Função de login com email e senha
@@ -357,29 +321,72 @@ auth.onAuthStateChanged((user) => {
 
 
 
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const messageInput = chatForm.querySelector('.chat__input');
+    const message = messageInput.value;
+    const timestamp = new Date().toLocaleString();
     
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const messageInput = chatForm.querySelector('.chat__input');
-        const message = messageInput.value;
-        const timestamp = new Date().toLocaleString();
-        
-        if (message.trim() !== '') {
-            if (message === '/clearall') {
-                clearAllMessages();
-            } else {
+    if (message.trim() !== '') {
+        // Verifica se a mensagem começa com "/bot"
+        if (message.startsWith('/bot')) {
+            // Envia a mensagem para o bot
+            sendMessageToBot(message).then((botResponse) => {
+                // Adiciona a resposta do bot ao chat
                 db.ref('messages').push({
-                    userId,
-                    userName,
-                    userColor,
-                    message,
-                    timestamp,
+                    userId: 'bot',
+                    userName: 'Bot',
+                    userColor: '#000000',
+                    message: botResponse,
+                    timestamp: new Date().toLocaleString(),
                 });
-            }
-            messageInput.value = '';
-            checkBotResponse(message);
+            }).catch(error => {
+                console.error('Erro ao enviar mensagem para o bot:', error);
+            });
+        } else if (message === '/clearall') {
+            clearAllMessages();
+        } else {
+            // Envia mensagem normal
+            db.ref('messages').push({
+                userId,
+                userName,
+                userColor,
+                message,
+                timestamp,
+            });
         }
-    });
+
+        // Limpa o campo de input após o envio
+        messageInput.value = '';
+    }
+});
+
+async function sendMessageToBot(userMessage) {
+    try {
+        const response = await fetch('/api/send-message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: 
+            JSON.stringify({ message: userMessage }),
+        });
+
+        // Verifique se a resposta é ok
+    
+
+        const data = await response.json();
+        if (!data.response) {
+            throw new Error('Resposta inválida do bot');
+        }
+
+        return data.response;
+    } catch (error) {
+        
+        return "Desculpe, ocorreu um erro ao tentar responder sua pergunta.";
+    }
+}
+
 
     function clearAllMessages() {
         messagesContainer.innerHTML = '';

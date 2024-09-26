@@ -4,51 +4,8 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const { db } = require('./firebaseConfig');
 const routes = require('./routes');
-const fs = require('fs');
-const path = require('path');
 const PORT = process.env.PORT || 3001;
 
-// Importar a biblioteca do Google Generative AI
-const {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} = require("@google/generative-ai");
-
-// Definir a chave da API Gemini
-const apiKey = "AIzaSyBVJmQC1FCnqb4vknJ9GPHHa2ZCVgF3Hng";
-const genAI = new GoogleGenerativeAI(apiKey);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-  systemInstruction: "Identificação do Bot:\n\nO bot se apresenta como um assistente especializado em programação, com conhecimento em várias linguagens de programação, como Python, Java, JavaScript, C++, Ruby, entre outras.",
-});
-
-const generationConfig = {
-  temperature: 1,
-  topP: 0.95,
-  topK: 64,
-  maxOutputTokens: 8192,
-  responseMimeType: "text/plain",
-};
-
-// Função para enviar a mensagem ao Gemini e receber a resposta
-async function getBotResponse(userMessage) {
-  const chatSession = model.startChat({
-    generationConfig,
-    history: [{ user: userMessage }],
-  });
-
-  try {
-    const result = await chatSession.sendMessage(userMessage);
-    return result.response.text();
-  } catch (error) {
-    console.error("Erro ao obter resposta do Gemini:", error);
-    return "Desculpe, não consegui processar sua pergunta no momento.";
-  }
-}
-
-// Inicializar o app Express
 const app = express();
 
 // Middleware para logar todas as conexões
@@ -81,23 +38,6 @@ app.post('/clearall', (req, res) => {
       console.error('Error clearing messages:', error);
       res.status(500).send({ error: 'Failed to clear messages' });
     });
-});
-
-// Endpoint para interagir com o bot do Gemini
-app.post('/api/bot/message', async (req, res) => {
-  const { message } = req.body;
-
-  if (!message) {
-    return res.status(400).send({ error: 'No message provided' });
-  }
-
-  try {
-    const botResponse = await getBotResponse(message);
-    res.status(200).send({ response: botResponse });
-  } catch (error) {
-    console.error('Erro ao processar mensagem do bot:', error);
-    res.status(500).send({ error: 'Erro ao obter resposta do bot' });
-  }
 });
 
 // Middleware de tratamento de erros
