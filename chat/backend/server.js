@@ -1,9 +1,12 @@
-// Importações
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { db } = require('./firebaseConfig'); // Certifique-se de que sua configuração do Firebase está correta
-const routes = require('./routes'); // Importe suas rotas conforme a necessidade
+const multer = require('multer');
+const { db } = require('./firebaseConfig');
+const routes = require('./routes');
+const fs = require('fs');
+const path = require('path');
+const PORT = process.env.PORT || 3001;
 
 // Importar a biblioteca do Google Generative AI
 const {
@@ -13,7 +16,7 @@ const {
 } = require("@google/generative-ai");
 
 // Definir a chave da API Gemini
-const apiKey = "AIzaSyBVJmQC1FCnqb4vknJ9GPHHa2ZCVgF3Hng"; // Substitua por sua chave de API
+const apiKey = "AIzaSyBVJmQC1FCnqb4vknJ9GPHHa2ZCVgF3Hng";
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -21,22 +24,24 @@ const model = genAI.getGenerativeModel({
   systemInstruction: "Identificação do Bot:\n\nO bot se apresenta como um assistente especializado em programação, com conhecimento em várias linguagens de programação, como Python, Java, JavaScript, C++, Ruby, entre outras.",
 });
 
-
+const generationConfig = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 64,
+  maxOutputTokens: 8192,
+  responseMimeType: "text/plain",
+};
 
 // Função para enviar a mensagem ao Gemini e receber a resposta
 async function getBotResponse(userMessage) {
-  try {
-    const chatSession = await model.startChat({
-      generationConfig,
-      history: [{ user: userMessage }],
-    });
+  const chatSession = model.startChat({
+    generationConfig,
+    history: [{ user: userMessage }],
+  });
 
+  try {
     const result = await chatSession.sendMessage(userMessage);
-    if (result && result.response) {
-      return result.response.text; // Retorna a resposta do bot
-    } else {
-      return "Nenhuma resposta foi recebida do bot.";
-    }
+    return result.response.text();
   } catch (error) {
     console.error("Erro ao obter resposta do Gemini:", error);
     return "Desculpe, não consegui processar sua pergunta no momento.";
@@ -59,8 +64,12 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
+// Configurar multer para uploads de arquivos
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Limite de 50MB
+
 // Rotas
-app.use('/api', routes);
+app.use('/api', routes(upload, db));
 
 // Rota para limpar todas as mensagens
 app.post('/clearall', (req, res) => {
@@ -97,8 +106,6 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Something went wrong!' });
 });
 
-// Iniciar o servidor
-const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
