@@ -21,13 +21,7 @@ const model = genAI.getGenerativeModel({
   systemInstruction: "Identificação do Bot:\n\nO bot se apresenta como um assistente especializado em programação, com conhecimento em várias linguagens de programação, como Python, Java, JavaScript, C++, Ruby, entre outras.",
 });
 
-const generationConfig = {
-  temperature: 1,
-  topP: 0.95,
-  topK: 64,
-  maxOutputTokens: 8192,
-  responseMimeType: "text/plain",
-};
+
 
 // Função para enviar a mensagem ao Gemini e receber a resposta
 async function getBotResponse(userMessage) {
