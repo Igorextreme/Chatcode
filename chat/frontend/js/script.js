@@ -361,10 +361,10 @@ chatForm.addEventListener('submit', (e) => {
     }
 });
 
-
 async function sendMessageToBot(userMessage) {
     try {
-        const response = await fetch('https://chatcode-back.onrender.com', {
+        console.log("Enviando mensagem para o bot:", userMessage); // Log da mensagem a ser enviada
+        const response = await fetch('https://chatcode-back.onrender.com/api/send-message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -378,16 +378,19 @@ async function sendMessageToBot(userMessage) {
         }
 
         const data = await response.json();
+        console.log("Resposta do bot recebida:", data); // Log da resposta recebida
+
         if (!data.response) {
             throw new Error('Resposta inválida do bot');
         }
 
         return data.response;
     } catch (error) {
-        console.error(error); // Adiciona log para ajudar no diagnóstico
+        console.error("Erro ao enviar mensagem ao bot:", error); // Adiciona log para ajudar no diagnóstico
         return "Desculpe, ocorreu um erro ao tentar responder sua pergunta.";
     }
 }
+
 
 
 
