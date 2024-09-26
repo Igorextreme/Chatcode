@@ -320,14 +320,26 @@ auth.onAuthStateChanged((user) => {
 });
 
 
-
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const messageInput = chatForm.querySelector('.chat__input');
     const message = messageInput.value;
     const timestamp = new Date().toLocaleString();
-    
+
     if (message.trim() !== '') {
+        // Adiciona a mensagem do usuário ao chat
+        db.ref('messages').push({
+            userId,
+            userName,
+            userColor,
+            message,
+            timestamp,
+        }).then(() => {
+            console.log("Mensagem do usuário adicionada ao chat:", message); // Log de confirmação
+        }).catch(error => {
+            console.error("Erro ao adicionar mensagem do usuário ao chat:", error);
+        });
+
         // Verifica se a mensagem começa com "/bot"
         if (message.startsWith('/bot')) {
             // Envia a mensagem para o bot
@@ -339,21 +351,16 @@ chatForm.addEventListener('submit', (e) => {
                     userColor: '#000000',
                     message: botResponse,
                     timestamp: new Date().toLocaleString(),
+                }).then(() => {
+                    console.log("Resposta do bot adicionada ao chat:", botResponse); // Log de confirmação
+                }).catch(error => {
+                    console.error("Erro ao adicionar resposta do bot ao chat:", error);
                 });
             }).catch(error => {
                 console.error('Erro ao enviar mensagem para o bot:', error);
             });
         } else if (message === '/clearall') {
             clearAllMessages();
-        } else {
-            // Envia mensagem normal
-            db.ref('messages').push({
-                userId,
-                userName,
-                userColor,
-                message,
-                timestamp,
-            });
         }
 
         // Limpa o campo de input após o envio
@@ -390,6 +397,7 @@ async function sendMessageToBot(userMessage) {
         return "Desculpe, ocorreu um erro ao tentar responder sua pergunta.";
     }
 }
+
 
 
 
